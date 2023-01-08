@@ -108,16 +108,10 @@ humn_node = tree_nodes_by_name['humn']
 #   the humn value
 root_node.compute()
 
-last_speed_timestamp = -1
-brute_guess = 1
-
+# use a set to count number of unique values seen
 root_left_values = set()
 root_right_values = set()
-
 is_binary_searchable = True
-is_root_left_constant = True
-
-# guess 10 or more values, say 1 million, 2 million, etc
 
 for guess in [1, 5, 10, 50, 100, 500, 100000, 500000, 1000000, 5000000]:
 	humn_node.value = guess
@@ -130,9 +124,7 @@ for guess in [1, 5, 10, 50, 100, 500, 100000, 500000, 1000000, 5000000]:
 	root_right_values.add(root_node.right.value)
 
 # see whether right or left value changes
-if len(root_right_values) == 1:
-	is_root_left_constant = False
-elif len(root_left_values) > 1:
+if len(root_right_values) > 1 and len(root_left_values) > 1:
 	is_binary_searchable = False
 
 absolute_max_guess = 10000000000000000
@@ -149,8 +141,6 @@ if is_binary_searchable:
 	humn_node.value = guess
 	humn_node.reset()
 	root_node.compute()
-
-	print("is_root_left_constant [{}]".format(is_root_left_constant))
 
 	left_initially_bigger = root_node.left.value > root_node.right.value
 	print("after guessing [1], left_initially_bigger is [{}]".format(left_initially_bigger))
@@ -187,17 +177,25 @@ else:
 
 print("guessing all values from {} to {}".format(guess_min, guess_max))
 
+last_speed_timestamp = -1
 brute_guess = guess_min
 
 while brute_guess < guess_max:
 
-	print("starting guess with humn value of {:,}".format(brute_guess))
+	ts_now = time.time()
+	if last_speed_timestamp > 0:
+		ts_diff = ts_now - last_speed_timestamp
+		print("starting guess with humn value of {:,} at {:,} guesses/sec".format(brute_guess, int(1000000 / ts_diff)))
+	last_speed_timestamp = ts_now
 
-	humn_node.value = brute_guess
-	# this apparently eventually re-computes the root
-	#   node, so we don't need to make a separate call
-	#   for that
-	humn_node.reset()
+	for i in range(0, 1000000):
+		#is_root_solved = False
 
-	brute_guess += 1
+		humn_node.value = brute_guess
+		# this apparently eventually re-computes the root
+		#   node, so we don't need to make a separate call
+		#   for that
+		humn_node.reset()
+
+		brute_guess += 1
 
