@@ -532,7 +532,7 @@ for start in best_traversals:
 							if last_speed_timestamp > 0:
 								ts_diff = ts_now - last_speed_timestamp
 								tests_per_second = int(1000000 / ts_diff)
-								sys.stdout.write("have tested {:,} solutions ({:.1f}%) (best={:,}) at {:,}/sec          \r".format(solutions_tried, pct_done, best_solution, tests_per_second))
+								sys.stdout.write("have tested {:,} solutions (best={:,}) at {:,}/sec          \r".format(solutions_tried, best_solution, tests_per_second))
 								sys.stdout.flush()
 							last_speed_timestamp = ts_now
 
